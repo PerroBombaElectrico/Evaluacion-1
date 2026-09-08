@@ -1,33 +1,30 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ producto.nombre }}</title>
-</head>
-<body>
+{% extends 'inventario/base.html' %}
+{# Vista de detalle: presenta la información completa de un producto. #}
+
+{% block title %}{{ producto.nombre }}{% endblock %}
+
+{% block content %}
     <main>
-        <h1>{{ producto.nombre }}</h1>
-
-        <dl>
-            <dt>Código</dt>
-            <dd>{{ producto.codigo }}</dd>
-
-            <dt>Descripción</dt>
-            <dd>{{ producto.descripcion|default:"Sin descripción" }}</dd>
-
-            <dt>Precio</dt>
-            <dd>${{ producto.precio }}</dd>
-
-            <dt>Stock disponible</dt>
-            <dd>{{ producto.stock }}</dd>
-        </dl>
-
-        <p>
-            <a href="{% url 'inventario:producto_actualizar' producto.pk %}">Editar</a>
-            <a href="{% url 'inventario:producto_eliminar' producto.pk %}">Eliminar</a>
-            <a href="{% url 'inventario:producto_lista' %}">Volver al inventario</a>
-        </p>
+        {# Navegación de regreso al listado general. #}
+        <a class="back-link" href="{% url 'inventario:producto_lista' %}">&larr; Volver al inventario</a>
+        <div class="panel detail-panel" style="margin-top: 28px;">
+            {# Resumen del producto y enlaces para editarlo o eliminarlo. #}
+            <section>
+                <div class="eyebrow">Detalle de producto</div>
+                <h1>{{ producto.nombre }}</h1>
+                <p class="lede">{{ producto.descripcion|default:"Sin descripción" }}</p>
+                <div class="actions">
+                    <a class="button" href="{% url 'inventario:producto_actualizar' producto.pk %}">Editar producto</a>
+                    <a class="button button--quiet" href="{% url 'inventario:producto_eliminar' producto.pk %}">Eliminar</a>
+                </div>
+            </section>
+            {# Ficha de datos: código, precio, stock y estado calculado. #}
+            <dl class="detail-list">
+                <div><dt>Código</dt><dd>{{ producto.codigo }}</dd></div>
+                <div><dt>Precio</dt><dd>${{ producto.precio }}</dd></div>
+                <div><dt>Stock disponible</dt><dd>{{ producto.stock }}</dd></div>
+                <div><dt>Estado</dt><dd>{% if producto.stock %}Disponible{% else %}Agotado{% endif %}</dd></div>
+            </dl>
+        </div>
     </main>
-</body>
-</html>
+{% endblock %}

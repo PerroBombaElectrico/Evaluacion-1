@@ -1,26 +1,30 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventario</title>
-</head>
-<body>
-    <main>
-        <h1>Inventario de productos</h1>
+{% extends 'inventario/base.html' %}
+{# Vista de listado: muestra todos los productos y sus acciones disponibles. #}
 
+{% block title %}Inventario{% endblock %}
+
+{% block content %}
+    <main>
+        {# Encabezado del inventario y botón para registrar un producto nuevo. #}
+        <div class="page-heading">
+            <div>
+                <div class="eyebrow">Catálogo / Existencias</div>
+                <h1>Inventario<br>de productos</h1>
+                <p class="lede">Una vista clara de cada artículo, su disponibilidad y el movimiento que necesita.</p>
+            </div>
+            <a class="button" href="{% url 'inventario:producto_crear' %}">Nuevo producto</a>
+        </div>
+
+        {# Mensajes de éxito enviados por Django después de crear, editar o eliminar. #}
         {% if messages %}
             {% for message in messages %}
-                <p>{{ message }}</p>
+                <div class="message">{{ message }}</div>
             {% endfor %}
         {% endif %}
 
-        <p>
-            <a href="{% url 'inventario:producto_crear' %}">Nuevo producto</a>
-        </p>
-
+        {# Tabla principal: productos proviene del contexto de producto_lista. #}
         {% if productos %}
-            <table>
+            <table class="inventory-table">
                 <thead>
                     <tr>
                         <th>Código</th>
@@ -33,11 +37,11 @@
                 <tbody>
                     {% for producto in productos %}
                         <tr>
-                            <td>{{ producto.codigo }}</td>
-                            <td>{{ producto.nombre }}</td>
+                            <td class="product-code">{{ producto.codigo }}</td>
+                            <td class="product-name">{{ producto.nombre }}</td>
                             <td>${{ producto.precio }}</td>
                             <td>{{ producto.stock }}</td>
-                            <td>
+                            <td class="actions">
                                 <a href="{% url 'inventario:producto_detalle' producto.pk %}">Ver</a>
                                 <a href="{% url 'inventario:producto_actualizar' producto.pk %}">Editar</a>
                                 <a href="{% url 'inventario:producto_eliminar' producto.pk %}">Eliminar</a>
@@ -46,9 +50,13 @@
                     {% endfor %}
                 </tbody>
             </table>
+        {# Estado vacío cuando todavía no hay productos registrados. #}
         {% else %}
-            <p>No hay productos registrados.</p>
+            <div class="panel empty-state">
+                <h2>No hay productos registrados</h2>
+                <p class="lede">Añade el primer artículo para comenzar a organizar tu inventario.</p>
+                <a class="button" href="{% url 'inventario:producto_crear' %}">Crear producto</a>
+            </div>
         {% endif %}
     </main>
-</body>
-</html>
+{% endblock %}

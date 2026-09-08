@@ -1,20 +1,26 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eliminar producto</title>
-</head>
-<body>
-    <main>
-        <h1>Eliminar producto</h1>
-        <p>¿Deseas eliminar el producto "{{ producto.nombre }}"?</p>
+{% extends 'inventario/base.html' %}
+{# Confirmación de eliminación: evita borrar un producto por accidente. #}
 
-        <form method="post">
-            {% csrf_token %}
-            <button type="submit">Sí, eliminar</button>
-            <a href="{% url 'inventario:producto_detalle' producto.pk %}">Cancelar</a>
-        </form>
+{% block title %}Eliminar producto{% endblock %}
+
+{% block content %}
+    <main>
+        {# El usuario puede volver al detalle antes de confirmar. #}
+        <a class="back-link" href="{% url 'inventario:producto_detalle' producto.pk %}">&larr; Volver al producto</a>
+        <div class="panel confirm-panel" style="margin-top: 28px;">
+            <div class="eyebrow">Acción irreversible</div>
+            <h1>Eliminar producto</h1>
+            <p class="lede">¿Deseas eliminar el producto <strong>{{ producto.nombre }}</strong>? Esta acción no se puede deshacer.</p>
+
+            {# Formulario POST protegido con CSRF para confirmar la eliminación. #}
+            <form method="post">
+                {% csrf_token %}
+                {# Acciones finales: eliminar definitivamente o cancelar. #}
+                <div class="form-actions">
+                    <button class="button button--danger" type="submit">Sí, eliminar</button>
+                    <a class="button button--quiet" href="{% url 'inventario:producto_detalle' producto.pk %}">Cancelar</a>
+                </div>
+            </form>
+        </div>
     </main>
-</body>
-</html>
+{% endblock %}
