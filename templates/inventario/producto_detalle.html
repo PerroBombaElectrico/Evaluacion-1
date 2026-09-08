@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ producto.nombre }}</title>
+</head>
+<body>
+    <main>
+        <h1>{{ producto.nombre }}</h1>
+
+        <dl>
+            <dt>Código</dt>
+            <dd>{{ producto.codigo }}</dd>
+
+            <dt>Descripción</dt>
+            <dd>{{ producto.descripcion|default:"Sin descripción" }}</dd>
+
+            <dt>Precio</dt>
+            <dd>${{ producto.precio }}</dd>
+
+            <dt>Stock disponible</dt>
+            <dd>{{ producto.stock }}</dd>
+        </dl>
+
+        <p>
+            <a href="{% url 'inventario:producto_actualizar' producto.pk %}">Editar</a>
+            <a href="{% url 'inventario:producto_eliminar' producto.pk %}">Eliminar</a>
+            <a href="{% url 'inventario:producto_lista' %}">Volver al inventario</a>
+        </p>
+    </main>
+</body>
+</html>
