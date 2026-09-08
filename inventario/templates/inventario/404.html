@@ -1,0 +1,17 @@
+{% extends 'inventario/base.html' %}
+{# Página 404: informa que la ruta no existe y ofrece volver al catálogo. #}
+{% block title %}Página no encontrada{% endblock %}
+{% block content %}
+<main class="container">
+    {# Panel centrado con el estado de error. #}
+    <section class="panel" style="max-width:620px; margin:48px auto 0; padding:56px 32px; text-align:center;">
+        {# Icono visual para identificar rápidamente el error. #}
+        <div style="display:grid; width:78px; height:78px; margin:0 auto 24px; place-items:center; border:1px solid rgba(129,140,248,.4); border-radius:50%; background:rgba(129,140,248,.12); color:var(--primary); font-size:34px; font-weight:700;">?</div>
+        <div class="eyebrow">Error 404</div>
+        <h1>Página no encontrada</h1>
+        <p class="lede" style="margin-right:auto; margin-left:auto;">La dirección que buscas no existe o el producto ya no está disponible. Regresa al catálogo para continuar.</p>
+        {# Enlace Django al listado principal de productos. #}
+        <a class="button" style="margin-top:24px;" href="{% url 'inventario:producto_lista' %}">Volver al catálogo</a>
+    </section>
+</main>
+{% endblock %}

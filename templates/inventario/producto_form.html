@@ -1,25 +1,17 @@
 {% extends 'inventario/base.html' %}
 {# Formulario reutilizado para crear y actualizar un producto. #}
-
 {% block title %}{{ titulo }}{% endblock %}
-
 {% block content %}
-    <main>
-        {# Enlace de navegación para regresar al listado sin guardar cambios. #}
-        <a class="back-link" href="{% url 'inventario:producto_lista' %}">&larr; Volver al inventario</a>
-        <div class="eyebrow" style="margin-top: 42px;">Ficha de producto</div>
-        <h1>{{ titulo }}</h1>
-        <p class="lede">Completa los datos esenciales para mantener el catálogo preciso y útil.</p>
-
-        {# Formulario POST: formulario contiene los campos y validaciones del ModelForm. #}
-        <form class="panel form-panel" method="post">
-            {% csrf_token %}
-            {{ formulario.as_p }}
-            {# Acciones para guardar o cancelar la operación. #}
-            <div class="form-actions">
-                <button class="button" type="submit">{{ boton }}</button>
-                <a class="button button--quiet" href="{% url 'inventario:producto_lista' %}">Cancelar</a>
-            </div>
-        </form>
-    </main>
+<main class="container">
+    {# Enlace para volver sin guardar. #}
+    <a class="back-link" href="{% url 'inventario:producto_lista' %}">&larr; Volver al inventario</a>
+    <div style="margin:28px 0 20px;"><div class="eyebrow">Ficha de producto</div><h1>{{ titulo }}</h1><p class="lede">Completa los datos del producto y guarda los cambios.</p></div>
+    {# Formulario POST: formulario contiene el ModelForm y sus validaciones. #}
+    <form class="panel form-panel" method="post">
+        {% csrf_token %}
+        {{ formulario.as_p }}
+        {# Acciones para guardar o cancelar. #}
+        <div class="form-actions"><button class="button" type="submit">{{ boton }}</button><a class="button button--quiet" href="{% url 'inventario:producto_lista' %}">Cancelar</a></div>
+    </form>
+</main>
 {% endblock %}

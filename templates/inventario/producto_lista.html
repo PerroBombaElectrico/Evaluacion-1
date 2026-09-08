@@ -1,62 +1,20 @@
 {% extends 'inventario/base.html' %}
-{# Vista de listado: muestra todos los productos y sus acciones disponibles. #}
-
+{# Listado: muestra los productos y sus acciones CRUD. #}
 {% block title %}Inventario{% endblock %}
-
 {% block content %}
-    <main>
-        {# Encabezado del inventario y botón para registrar un producto nuevo. #}
-        <div class="page-heading">
-            <div>
-                <div class="eyebrow">Catálogo / Existencias</div>
-                <h1>Inventario<br>de productos</h1>
-                <p class="lede">Una vista clara de cada artículo, su disponibilidad y el movimiento que necesita.</p>
-            </div>
-            <a class="button" href="{% url 'inventario:producto_crear' %}">Nuevo producto</a>
-        </div>
-
-        {# Mensajes de éxito enviados por Django después de crear, editar o eliminar. #}
-        {% if messages %}
-            {% for message in messages %}
-                <div class="message">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
-
-        {# Tabla principal: productos proviene del contexto de producto_lista. #}
-        {% if productos %}
-            <table class="inventory-table">
-                <thead>
-                    <tr>
-                        <th>Código</th>
-                        <th>Nombre</th>
-                        <th>Precio</th>
-                        <th>Stock</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for producto in productos %}
-                        <tr>
-                            <td class="product-code">{{ producto.codigo }}</td>
-                            <td class="product-name">{{ producto.nombre }}</td>
-                            <td>${{ producto.precio }}</td>
-                            <td>{{ producto.stock }}</td>
-                            <td class="actions">
-                                <a href="{% url 'inventario:producto_detalle' producto.pk %}">Ver</a>
-                                <a href="{% url 'inventario:producto_actualizar' producto.pk %}">Editar</a>
-                                <a href="{% url 'inventario:producto_eliminar' producto.pk %}">Eliminar</a>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        {# Estado vacío cuando todavía no hay productos registrados. #}
-        {% else %}
-            <div class="panel empty-state">
-                <h2>No hay productos registrados</h2>
-                <p class="lede">Añade el primer artículo para comenzar a organizar tu inventario.</p>
-                <a class="button" href="{% url 'inventario:producto_crear' %}">Crear producto</a>
-            </div>
-        {% endif %}
-    </main>
+<main class="container">
+    {# Encabezado de la pantalla y enlace para crear. #}
+    <div class="page-heading"><div><div class="eyebrow">Catálogo / Existencias</div><h1>Inventario de productos</h1><p class="lede">Consulta rápidamente el código, precio y disponibilidad de cada producto.</p></div><a class="button" href="{% url 'inventario:producto_crear' %}">Nuevo producto</a></div>
+    {# Mensajes de Django después de crear, editar o eliminar. #}
+    {% if messages %}{% for message in messages %}<div class="message">{{ message }}</div>{% endfor %}{% endif %}
+    {% if productos %}
+    {# Tabla: productos es el QuerySet enviado por producto_lista. #}
+    <section class="panel table-panel"><table><thead><tr><th>Código</th><th>Nombre</th><th>Precio</th><th>Stock</th><th>Acciones</th></tr></thead><tbody>
+        {% for producto in productos %}<tr><td><span class="code">{{ producto.codigo }}</span></td><td><span class="product-name">{{ producto.nombre }}</span><br><span class="muted">{{ producto.descripcion|default:'Sin descripción'|truncatechars:55 }}</span></td><td>${{ producto.precio }}</td><td>{% if producto.stock %}<span class="status">{{ producto.stock }} unidades</span>{% else %}<span class="status status--empty">Agotado</span>{% endif %}</td><td><div class="actions"><a href="{% url 'inventario:producto_detalle' producto.pk %}">Ver</a><a href="{% url 'inventario:producto_actualizar' producto.pk %}">Editar</a><a href="{% url 'inventario:producto_eliminar' producto.pk %}">Eliminar</a></div></td></tr>{% endfor %}
+    </tbody></table></section>
+    {% else %}
+    {# Estado vacío cuando no existen registros. #}
+    <section class="panel empty-state"><h2>No hay productos registrados</h2><p>Añade el primer producto para comenzar.</p><a class="button" href="{% url 'inventario:producto_crear' %}">Crear producto</a></section>
+    {% endif %}
+</main>
 {% endblock %}

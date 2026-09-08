@@ -1,26 +1,16 @@
 {% extends 'inventario/base.html' %}
-{# Confirmación de eliminación: evita borrar un producto por accidente. #}
-
+{# Confirmación: solicita aprobación antes de eliminar el producto. #}
 {% block title %}Eliminar producto{% endblock %}
-
 {% block content %}
-    <main>
-        {# El usuario puede volver al detalle antes de confirmar. #}
-        <a class="back-link" href="{% url 'inventario:producto_detalle' producto.pk %}">&larr; Volver al producto</a>
-        <div class="panel confirm-panel" style="margin-top: 28px;">
-            <div class="eyebrow">Acción irreversible</div>
-            <h1>Eliminar producto</h1>
-            <p class="lede">¿Deseas eliminar el producto <strong>{{ producto.nombre }}</strong>? Esta acción no se puede deshacer.</p>
-
-            {# Formulario POST protegido con CSRF para confirmar la eliminación. #}
-            <form method="post">
-                {% csrf_token %}
-                {# Acciones finales: eliminar definitivamente o cancelar. #}
-                <div class="form-actions">
-                    <button class="button button--danger" type="submit">Sí, eliminar</button>
-                    <a class="button button--quiet" href="{% url 'inventario:producto_detalle' producto.pk %}">Cancelar</a>
-                </div>
-            </form>
-        </div>
-    </main>
+<main class="container">
+    {# El usuario puede volver al detalle sin eliminar. #}
+    <a class="back-link" href="{% url 'inventario:producto_detalle' producto.pk %}">&larr; Volver al producto</a>
+    <section class="panel confirm-panel">
+        <div class="eyebrow warning">Acción irreversible</div><h1>Eliminar producto</h1><p class="lede">¿Deseas eliminar <strong>{{ producto.nombre }}</strong>? Esta acción no se puede deshacer.</p>
+        {# Resumen dinámico del producto seleccionado. #}
+        <dl style="margin-top:24px;"><div><dt>Código</dt><dd>{{ producto.codigo }}</dd></div><div><dt>Stock</dt><dd>{{ producto.stock }} unidades</dd></div></dl>
+        {# Formulario POST protegido con CSRF para confirmar. #}
+        <form method="post">{% csrf_token %}<div class="form-actions"><button class="button button--danger" type="submit">Sí, eliminar</button><a class="button button--quiet" href="{% url 'inventario:producto_detalle' producto.pk %}">Cancelar</a></div></form>
+    </section>
+</main>
 {% endblock %}
