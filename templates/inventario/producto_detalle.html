@@ -11,5 +11,6 @@
         {# Ficha de datos conectada al objeto producto. #}
         <dl><div><dt>Código</dt><dd>{{ producto.codigo }}</dd></div><div><dt>Precio</dt><dd>${{ producto.precio }}</dd></div><div><dt>Stock disponible</dt><dd>{{ producto.stock }} unidades</dd></div><div><dt>Estado</dt><dd>{% if producto.stock %}Disponible{% else %}<span class="warning">Agotado</span>{% endif %}</dd></div><div><dt>Fecha de creación</dt><dd>{{ producto.fecha_creacion|date:'d/m/Y H:i' }}</dd></div><div><dt>Última actualización</dt><dd>{{ producto.fecha_actualizacion|date:'d/m/Y H:i' }}</dd></div></dl>
     </section>
+
 </main>
 {% endblock %}

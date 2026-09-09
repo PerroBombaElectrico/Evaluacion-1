@@ -1,0 +1,51 @@
+{% extends 'inventario/base.html' %}
+
+{% block title %}Ventas{% endblock %}
+
+{% block content %}
+<main class="container">
+    <div class="page-heading">
+        <div>
+            <div class="eyebrow">Reportes</div>
+            <h1>Historial de ventas</h1>
+            <p class="lede">Consulta todas las ventas registradas en el sistema con su producto, cantidad, precio y total.</p>
+        </div>
+        <a class="button" href="{% url 'inventario:producto_comprar' %}">Ir a comprar</a>
+    </div>
+
+    {% if ventas %}
+        <section class="panel table-panel">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>Precio unitario</th>
+                        <th>Total</th>
+                        <th>Fecha</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for venta in ventas %}
+                        <tr>
+                            <td>
+                                <span class="product-name">{{ venta.producto.nombre }}</span><br>
+                                <span class="muted">{{ venta.producto.codigo }}</span>
+                            </td>
+                            <td>{{ venta.cantidad }}</td>
+                            <td>${{ venta.precio_unitario }}</td>
+                            <td>${{ venta.total }}</td>
+                            <td>{{ venta.fecha_venta|date:'d/m/Y H:i' }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    {% else %}
+        <section class="panel empty-state">
+            <h2>No hay ventas registradas</h2>
+            <p>Aún no se ha realizado ninguna compra.</p>
+        </section>
+    {% endif %}
+</main>
+{% endblock %}

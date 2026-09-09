@@ -1,0 +1,67 @@
+{% extends 'inventario/base.html' %}
+
+{% block title %}Comprar{% endblock %}
+
+{% block content %}
+<main class="container">
+    <div class="page-heading">
+        <div>
+            <div class="eyebrow">Tienda</div>
+            <h1>Compra productos</h1>
+            <p class="lede">Explora el catálogo disponible y compra directamente cada artículo con un clic.</p>
+        </div>
+        <a class="button" href="{% url 'inventario:producto_lista' %}">Inventario</a>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="message">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    {% if productos %}
+        <section class="panel table-panel">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Precio</th>
+                        <th>Stock</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for producto in productos %}
+                        <tr>
+                            <td>
+                                <span class="product-name">{{ producto.nombre }}</span><br>
+                                <span class="muted">{{ producto.descripcion|default:'Sin descripción'|truncatechars:55 }}</span>
+                            </td>
+                            <td>${{ producto.precio }}</td>
+                            <td>
+                                {% if producto.stock %}
+                                    <span class="status">{{ producto.stock }} disponibles</span>
+                                {% else %}
+                                    <span class="status status--empty">Agotado</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if producto.stock %}
+                                    <a class="button" href="{% url 'inventario:producto_detalle' producto.pk %}">Comprar</a>
+                                {% else %}
+                                    <span class="muted">No disponible</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    {% else %}
+        <section class="panel empty-state">
+            <h2>No hay productos para vender</h2>
+            <p>Primero agrega productos desde el inventario.</p>
+        </section>
+    {% endif %}
+</main>
+{% endblock %}
