@@ -11,12 +11,18 @@ SECRET_KEY = os.getenv("SECRET_KEY", "django-inventory-development-key")
 DEBUG = os.getenv("DEBUG", "True").lower() == "true"
 ALLOWED_HOSTS = [
     host.strip()
-    for host in os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+    for host in os.getenv(
+        "ALLOWED_HOSTS",
+        "localhost,127.0.0.1,evaluacion-1-ashy.vercel.app",
+    ).split(",")
     if host.strip()
 ]
 CSRF_TRUSTED_ORIGINS = [
     origin.strip()
-    for origin in os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")
+    for origin in os.getenv(
+        "CSRF_TRUSTED_ORIGINS",
+        "https://evaluacion-1-ashy.vercel.app",
+    ).split(",")
     if origin.strip()
 ]
 

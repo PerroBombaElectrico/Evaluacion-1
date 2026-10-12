@@ -3,9 +3,9 @@ from django.contrib import admin
 from .models import DetalleVenta, Producto, Venta
 
 
-admin.site.site_title = "Tienda Admin"
-admin.site.site_header = "Tienda | Panel administrativo"
-admin.site.index_title = "Gestión de la tienda"
+admin.site.site_title = "Administración de Tienda ES02"
+admin.site.site_header = "Administración de Tienda ES02"
+admin.site.index_title = "Administración de Tienda ES02"
 
 
 @admin.register(Producto)
