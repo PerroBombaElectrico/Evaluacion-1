@@ -1,16 +1,22 @@
 {% extends 'inventario/base.html' %}
-{# Confirmación: solicita aprobación antes de eliminar el producto. #}
+
 {% block title %}Eliminar producto{% endblock %}
+
 {% block content %}
-<main class="container">
-    {# El usuario puede volver al detalle sin eliminar. #}
-    <a class="back-link" href="{% url 'inventario:producto_detalle' producto.pk %}">&larr; Volver al producto</a>
-    <section class="panel confirm-panel">
-        <div class="eyebrow warning">Acción irreversible</div><h1>Eliminar producto</h1><p class="lede">¿Deseas eliminar <strong>{{ producto.nombre }}</strong>? Esta acción no se puede deshacer.</p>
-        {# Resumen dinámico del producto seleccionado. #}
-        <dl style="margin-top:24px;"><div><dt>Código</dt><dd>{{ producto.codigo }}</dd></div><div><dt>Stock</dt><dd>{{ producto.stock }} unidades</dd></div></dl>
-        {# Formulario POST protegido con CSRF para confirmar. #}
-        <form method="post">{% csrf_token %}<div class="form-actions"><button class="button button--danger" type="submit">Sí, eliminar</button><a class="button button--quiet" href="{% url 'inventario:producto_detalle' producto.pk %}">Cancelar</a></div></form>
-    </section>
-</main>
+<div class="panel" style="max-width: 640px; margin: 0 auto;">
+    <h1>Eliminar producto</h1>
+    <p class="lead">¿Deseas eliminar <strong>{{ producto.nombre }}</strong>? Esta acción no se puede deshacer.</p>
+    <div class="form-row" style="margin-top: 1rem;">
+        <label>Stock actual</label>
+        <div class="form-control" style="background: #f8fafc;">{{ producto.stock }} unidades</div>
+    </div>
+    <form method="post">
+        {% csrf_token %}
+        <div class="actions" style="margin-top: 1rem;">
+            <button class="btn btn-danger" type="submit">Sí, eliminar</button>
+            <a class="btn btn-secondary" href="{% url 'inventario:producto_detalle' producto.pk %}">Cancelar</a>
+        </div>
+    </form>
+</div>
 {% endblock %}
+

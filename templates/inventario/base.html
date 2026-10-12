@@ -1,83 +1,46 @@
-{# Plantilla base: estructura y estilos oscuros compartidos por todas las vistas. #}
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <script src="https://cdn.tailwindcss.com"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Inventario{% endblock %} | Stockroom</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700&display=swap" rel="stylesheet">
-    <style>
-        :root { --bg:#0b0f19; --panel:#131d2e; --panel-alt:#0f172a; --line:#26364b; --text:#e7edf5; --muted:#94a3b8; --primary:#818cf8; --primary-hover:#6366f1; --danger:#f87171; --success:#34d399; }
-        * { box-sizing: border-box; }
-        body { margin:0; min-height:100vh; background:var(--bg); color:var(--text); font-family:Inter, sans-serif; }
-        a { color:inherit; }
-        .site-header { display:flex; align-items:center; justify-content:space-between; gap:20px; min-height:72px; padding:14px 32px; border-bottom:1px solid var(--line); background:#090d16; }
-        .brand { flex-shrink:0; color:#fff; font-family:'Plus Jakarta Sans',sans-serif; font-size:18px; font-weight:700; text-decoration:none; }
-        .brand-mark { color:var(--primary); }
-        .header-link, .back-link { color:var(--muted); font-size:12px; font-weight:600; text-decoration:none; }
-        .header-link { text-align:right; }
-        .header-link:hover, .back-link:hover { color:#fff; }
-        a:focus-visible, button:focus-visible { outline:2px solid var(--primary); outline-offset:3px; }
-        .container { width:min(1100px, calc(100% - 40px)); margin:0 auto; padding:42px 0 70px; }
-        .page-heading { display:flex; align-items:end; justify-content:space-between; gap:24px; margin-bottom:30px; }
-        .eyebrow { margin-bottom:8px; color:var(--primary); font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; }
-        h1, h2 { margin:0; font-family:'Plus Jakarta Sans',sans-serif; color:#fff; }
-        h1 { font-size:44px; line-height:1.1; }
-        h2 { font-size:20px; }
-        .lede { max-width:620px; margin:10px 0 0; color:var(--muted); line-height:1.6; }
-        .panel { border:1px solid var(--line); border-radius:10px; background:var(--panel); box-shadow:0 14px 30px rgba(0,0,0,.18); }
-        .button { display:inline-flex; min-height:40px; align-items:center; justify-content:center; padding:0 16px; border:1px solid var(--primary); border-radius:7px; background:var(--primary); color:#fff; font-family:inherit; font-size:12px; font-weight:700; text-decoration:none; cursor:pointer; }
-        .button:hover { border-color:var(--primary-hover); background:var(--primary-hover); }
-        .button--quiet { border-color:var(--line); background:var(--panel-alt); color:var(--text); }
-        .button--quiet:hover { background:var(--line); }
-        .button--danger { border-color:#b91c1c; background:#b91c1c; }
-        .button--danger:hover { background:#dc2626; }
-        .message { margin-bottom:18px; padding:12px 15px; border:1px solid rgba(52,211,153,.3); border-radius:7px; background:rgba(6,78,59,.35); color:#a7f3d0; font-size:13px; }
-        .table-panel { overflow-x:auto; }
-        table { width:100%; border-collapse:collapse; min-width:680px; }
-        th { padding:14px 18px; border-bottom:1px solid var(--line); color:var(--muted); font-size:11px; text-align:left; text-transform:uppercase; letter-spacing:.08em; }
-        td { padding:17px 18px; border-bottom:1px solid rgba(38,54,75,.65); font-size:13px; }
-        tbody tr:hover { background:rgba(15,23,42,.7); }
-        tbody tr:last-child td { border-bottom:0; }
-        .code { color:var(--primary); font-family:monospace; font-size:12px; }
-        .product-name { color:#fff; font-weight:600; }
-        .muted { color:var(--muted); font-size:12px; }
-        .status { display:inline-block; padding:5px 9px; border-radius:999px; background:rgba(52,211,153,.12); color:var(--success); font-size:11px; white-space:nowrap; }
-        .status--empty { background:rgba(248,113,113,.12); color:var(--danger); }
-        .actions { display:flex; flex-wrap:wrap; gap:12px; color:var(--primary); font-size:12px; font-weight:600; }
-        .actions a { text-decoration:none; }
-        .actions a:hover { color:#fff; }
-        .empty-state { padding:60px 24px; text-align:center; }
-        .empty-state p { color:var(--muted); }
-        .form-panel { max-width:720px; margin:0 auto; padding:28px; }
-        form p { margin:0 0 18px; }
-        form label { display:block; margin-bottom:7px; color:var(--text); font-size:12px; font-weight:600; }
-        .form-control { width:100%; padding:11px 12px; border:1px solid var(--line); border-radius:6px; outline:0; background:var(--panel-alt); color:var(--text); }
-        .form-control:focus { border-color:var(--primary); box-shadow:0 0 0 2px rgba(129,140,248,.15); }
-        textarea.form-control { resize:vertical; }
-        .errorlist { margin:5px 0; padding:0; color:var(--danger); font-size:12px; list-style:none; }
-        .form-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:24px; padding-top:20px; border-top:1px solid var(--line); }
-        .detail-panel { padding:30px; }
-        .detail-header { display:flex; align-items:start; justify-content:space-between; gap:20px; margin-bottom:28px; }
-        .detail-actions { display:flex; flex-wrap:wrap; gap:10px; }
-        dl { display:grid; grid-template-columns:repeat(2,1fr); gap:1px; margin:0; border:1px solid var(--line); background:var(--line); }
-        dl div { padding:18px; background:var(--panel-alt); }
-        dt { color:var(--muted); font-size:11px; font-weight:600; text-transform:uppercase; }
-        dd { margin:8px 0 0; color:#fff; line-height:1.5; }
-        .confirm-panel { max-width:640px; margin:20px auto; padding:30px; border-color:rgba(248,113,113,.3); }
-        .warning { color:var(--danger); }
-        @media (max-width:650px) { .site-header { padding:14px 20px; } .container { width:min(100% - 28px, 1100px); padding-top:28px; } .page-heading, .detail-header { display:block; } .page-heading .button, .detail-actions { margin-top:18px; } .form-panel, .detail-panel, .confirm-panel { padding:22px 18px; } dl { grid-template-columns:1fr; } h1 { font-size:32px; } }
-    </style>
+    <title>{% block title %}Tienda{% endblock %} | Panel de gestión</title>
+    <link rel="stylesheet" href="{% static 'inventario/css/styles.css' %}">
 </head>
 <body>
-    {# Cabecera sencilla: marca y acceso para crear productos. #}
-    <header class="site-header">
-        <a class="brand" href="{% url 'inventario:producto_lista' %}"><span class="brand-mark">/</span> stockroom</a>
-        <a class="header-link" href="{% url 'inventario:producto_crear' %}">Añadir producto +</a>
+    <header class="topbar">
+        <div class="container topbar-inner">
+            <div class="brand">Tienda ES02</div>
+            <nav class="nav" aria-label="Navegación principal">
+                <a href="{% url 'inventario:inicio' %}">Inicio</a>
+                <a href="{% url 'inventario:producto_lista' %}">Productos</a>
+                <a href="{% url 'inventario:venta_lista' %}">Ventas</a>
+                <a href="{% url 'inventario:reporte_ventas' %}">Reporte</a>
+                <a href="/admin/">Admin</a>
+                {% if user.is_authenticated %}
+                <form method="post" action="{% url 'logout' %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button class="nav-link-button" type="submit">Cerrar sesión</button>
+                </form>
+                {% else %}
+                <a href="{% url 'login' %}">Iniciar sesión</a>
+                {% endif %}
+            </nav>
+        </div>
     </header>
-    {# Las plantillas hijas insertan aquí su contenido principal. #}
-    {% block content %}{% endblock %}
+
+    <main class="main">
+        <div class="container">
+            {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                <div class="message {% if message.tags %}{{ message.tags }}{% endif %}">{{ message }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% block content %}{% endblock %}
+        </div>
+    </main>
 </body>
 </html>

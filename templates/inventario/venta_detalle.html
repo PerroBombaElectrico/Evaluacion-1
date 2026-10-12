@@ -1,0 +1,55 @@
+{% extends 'inventario/base.html' %}
+
+{% block title %}Detalle de venta {{ venta.numero_venta }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <div class="eyebrow">Venta</div>
+        <h1>{{ venta.numero_venta }}</h1>
+        <p class="lead">Resumen completo de los productos vendidos.</p>
+    </div>
+    <div class="actions">
+        <a class="btn btn-secondary" href="{% url 'inventario:venta_actualizar' venta.pk %}">Editar</a>
+        <a class="btn btn-danger" href="{% url 'inventario:venta_eliminar' venta.pk %}">Eliminar</a>
+    </div>
+</div>
+
+<div class="panel" style="margin-bottom:1rem;">
+    <div class="form-grid">
+        <div class="form-row">
+            <label>Fecha y hora</label>
+            <div class="form-control" style="background: #f8fafc;">{{ venta.fecha_venta|date:'d/m/Y H:i' }}</div>
+        </div>
+        <div class="form-row">
+            <label>Total</label>
+            <div class="form-control" style="background: #f8fafc;">$ {{ venta.total }}</div>
+        </div>
+    </div>
+</div>
+
+<div class="panel table-wrap">
+    <table>
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Precio unitario</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for detalle in venta.detalles.all %}
+            <tr>
+                <td>{{ detalle.producto.nombre }}</td>
+                <td>{{ detalle.cantidad }}</td>
+                <td>$ {{ detalle.precio_unitario }}</td>
+                <td>$ {{ detalle.subtotal }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="4">La venta aún no tiene detalles.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

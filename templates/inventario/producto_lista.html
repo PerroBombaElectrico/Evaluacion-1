@@ -1,20 +1,86 @@
 {% extends 'inventario/base.html' %}
-{# Listado: muestra los productos y sus acciones CRUD. #}
-{% block title %}Inventario{% endblock %}
+
+{% block title %}Productos{% endblock %}
+
 {% block content %}
-<main class="container">
-    {# Encabezado de la pantalla y enlace para crear. #}
-    <div class="page-heading"><div><div class="eyebrow">Catálogo / Existencias</div><h1>Inventario de productos</h1><p class="lede">Consulta rápidamente el código, precio y disponibilidad de cada producto.</p></div><a class="button" href="{% url 'inventario:producto_crear' %}">Nuevo producto</a></div>
-    {# Mensajes de Django después de crear, editar o eliminar. #}
-    {% if messages %}{% for message in messages %}<div class="message">{{ message }}</div>{% endfor %}{% endif %}
-    {% if productos %}
-    {# Tabla: productos es el QuerySet enviado por producto_lista. #}
-    <section class="panel table-panel"><table><thead><tr><th>Código</th><th>Nombre</th><th>Precio</th><th>Stock</th><th>Acciones</th></tr></thead><tbody>
-        {% for producto in productos %}<tr><td><span class="code">{{ producto.codigo }}</span></td><td><span class="product-name">{{ producto.nombre }}</span><br><span class="muted">{{ producto.descripcion|default:'Sin descripción'|truncatechars:55 }}</span></td><td>${{ producto.precio }}</td><td>{% if producto.stock %}<span class="status">{{ producto.stock }} unidades</span>{% else %}<span class="status status--empty">Agotado</span>{% endif %}</td><td><div class="actions"><a href="{% url 'inventario:producto_detalle' producto.pk %}">Ver</a><a href="{% url 'inventario:producto_actualizar' producto.pk %}">Editar</a><a href="{% url 'inventario:producto_eliminar' producto.pk %}">Eliminar</a></div></td></tr>{% endfor %}
-    </tbody></table></section>
-    {% else %}
-    {# Estado vacío cuando no existen registros. #}
-    <section class="panel empty-state"><h2>No hay productos registrados</h2><p>Añade el primer producto para comenzar.</p><a class="button" href="{% url 'inventario:producto_crear' %}">Crear producto</a></section>
+<div class="page-header">
+    <div>
+        <div class="eyebrow">Inventario</div>
+        <h1>Productos</h1>
+        <p class="lead">Consulta, busca y administra el catálogo de la tienda.</p>
+    </div>
+    <a class="btn btn-primary" href="{% url 'inventario:producto_crear' %}">Nuevo producto</a>
+</div>
+
+<div class="panel" style="margin-bottom: 1rem;">
+    <form method="get" class="summary">
+        <input class="form-control" type="text" name="q" value="{{ query|default:'' }}" placeholder="Buscar por nombre">
+        <button class="btn btn-secondary" type="submit">Buscar</button>
+        {% if query %}
+        <a class="btn btn-secondary" href="{% url 'inventario:producto_lista' %}">Limpiar</a>
+        {% endif %}
+    </form>
+</div>
+
+{% if productos %}
+<div class="panel table-wrap">
+    <table>
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Categoría</th>
+                <th>Precio</th>
+                <th>Stock</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for producto in productos %}
+            <tr>
+                <td>
+                    <strong>{{ producto.nombre }}</strong><br>
+                    <span class="muted">{{ producto.descripcion|default:'Sin descripción'|truncatechars:70 }}</span>
+                </td>
+                <td>{{ producto.categoria|default:'General' }}</td>
+                <td>$ {{ producto.precio }}</td>
+                <td>
+                    {% if producto.stock > 0 %}
+                    <span class="badge badge-success">{{ producto.stock }} unidades</span>
+                    {% else %}
+                    <span class="badge badge-danger">Agotado</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <div class="actions">
+                        <a class="btn btn-secondary btn-inline" href="{% url 'inventario:producto_detalle' producto.pk %}">Ver</a>
+                        <a class="btn btn-secondary btn-inline" href="{% url 'inventario:producto_actualizar' producto.pk %}">Editar</a>
+                        <a class="btn btn-danger btn-inline" href="{% url 'inventario:producto_eliminar' producto.pk %}">Eliminar</a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% if productos.has_other_pages %}
+<div class="panel" style="margin-top: 1rem; display:flex; justify-content:space-between; flex-wrap: wrap; gap: 0.5rem;">
+    {% if productos.has_previous %}
+    <a class="btn btn-secondary" href="?page={{ productos.previous_page_number }}{% if query %}&q={{ query }}{% endif %}">Anterior</a>
     {% endif %}
-</main>
+    <span class="muted">Página {{ productos.number }} de {{ productos.paginator.num_pages }}</span>
+    {% if productos.has_next %}
+    <a class="btn btn-secondary" href="?page={{ productos.next_page_number }}{% if query %}&q={{ query }}{% endif %}">Siguiente</a>
+    {% endif %}
+</div>
+{% endif %}
+
+{% else %}
+<div class="panel empty-state">
+    <h2>No hay productos registrados</h2>
+    <p>Agrega el primer producto para iniciar tu inventario.</p>
+    <a class="btn btn-primary" href="{% url 'inventario:producto_crear' %}">Crear producto</a>
+</div>
+{% endif %}
 {% endblock %}
+

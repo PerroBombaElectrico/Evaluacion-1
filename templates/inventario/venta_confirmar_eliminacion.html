@@ -1,0 +1,21 @@
+{% extends 'inventario/base.html' %}
+
+{% block title %}Eliminar venta{% endblock %}
+
+{% block content %}
+<div class="panel" style="max-width:600px; margin:0 auto;">
+    <h1>Eliminar venta</h1>
+    <p class="lead">¿Deseas eliminar la venta <strong>{{ venta.numero_venta }}</strong>? Se restaurará el stock asociado.</p>
+    <div class="form-row">
+        <label>Total</label>
+        <div class="form-control" style="background:#f8fafc;">$ {{ venta.total }}</div>
+    </div>
+    <form method="post">
+        {% csrf_token %}
+        <div class="actions">
+            <button class="btn btn-danger" type="submit">Sí, eliminar</button>
+            <a class="btn btn-secondary" href="{% url 'inventario:venta_detalle' venta.pk %}">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

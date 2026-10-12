@@ -1,0 +1,30 @@
+{% extends "inventario/base.html" %}
+
+{% block title %}Iniciar sesión{% endblock %}
+
+{% block content %}
+<section class="panel form-panel" style="max-width: 30rem; margin: 2rem auto;">
+    <div class="eyebrow">Acceso privado</div>
+    <h1>Iniciar sesión</h1>
+    <p class="lede">Ingresa con un usuario autorizado para administrar productos y ventas.</p>
+
+    {% if form.errors %}
+    <div class="message error">El usuario o la contraseña no son correctos.</div>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ next }}">
+
+        <div class="form-row">
+            <label for="{{ form.username.id_for_label }}">Usuario</label>
+            {{ form.username }}
+        </div>
+        <div class="form-row">
+            <label for="{{ form.password.id_for_label }}">Contraseña</label>
+            {{ form.password }}
+        </div>
+        <button class="btn btn-primary" type="submit">Entrar</button>
+    </form>
+</section>
+{% endblock %}

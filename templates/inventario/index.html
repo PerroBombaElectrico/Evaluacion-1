@@ -1,0 +1,38 @@
+{% extends 'inventario/base.html' %}
+
+{% block title %}Inicio{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <div class="eyebrow">Dashboard</div>
+        <h1>Control de venta</h1>
+        <p class="lead">Resumen general del inventario y rendimiento de ventas.</p>
+    </div>
+    <a class="btn btn-primary" href="{% url 'inventario:venta_crear' %}">Registrar venta</a>
+</div>
+
+<div class="grid-3">
+    <div class="metric card">
+        <div class="metric-label">Productos</div>
+        <div class="metric-value">{{ total_productos }}</div>
+    </div>
+    <div class="metric card">
+        <div class="metric-label">Ventas</div>
+        <div class="metric-value">{{ total_ventas }}</div>
+    </div>
+    <div class="metric card">
+        <div class="metric-label">Total vendido</div>
+        <div class="metric-value">$ {{ total_vendido }}</div>
+    </div>
+</div>
+
+<div class="panel" style="margin-top: 1.5rem;">
+    <h2>Acciones rápidas</h2>
+    <div class="actions" style="margin-top: 1rem;">
+        <a class="btn btn-primary" href="{% url 'inventario:producto_lista' %}">Ver productos</a>
+        <a class="btn btn-secondary" href="{% url 'inventario:venta_lista' %}">Ver ventas</a>
+        <a class="btn btn-secondary" href="{% url 'inventario:reporte_ventas' %}">Reportes</a>
+    </div>
+</div>
+{% endblock %}

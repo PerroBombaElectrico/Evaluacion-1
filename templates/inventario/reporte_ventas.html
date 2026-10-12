@@ -1,0 +1,76 @@
+{% extends 'inventario/base.html' %}
+
+{% block title %}Reporte de ventas{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <div class="eyebrow">Reportes</div>
+        <h1>Ventas por rango de fechas</h1>
+        <p class="lead">Selecciona un periodo para consultar ventas y total vendido.</p>
+    </div>
+</div>
+
+<div class="panel" style="margin-bottom:1rem;">
+    <form method="get">
+        <div class="form-grid">
+            {% for field in form %}
+            <div class="form-row">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                <ul class="errorlist">{% for error in field.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% if form.non_field_errors %}
+        <ul class="errorlist">{% for error in form.non_field_errors %}<li>{{ error }}</li>{% endfor %}</ul>
+        {% endif %}
+        <div class="actions" style="margin-top:1rem;">
+            <button class="btn btn-primary" type="submit">Consultar</button>
+        </div>
+    </form>
+</div>
+
+{% if ventas %}
+<div class="grid-3" style="margin-bottom:1rem;">
+    <div class="metric card">
+        <div class="metric-label">Número de ventas</div>
+        <div class="metric-value">{{ numero_ventas }}</div>
+    </div>
+    <div class="metric card" style="grid-column: span 2;">
+        <div class="metric-label">Total vendido</div>
+        <div class="metric-value">$ {{ total_vendido|stringformat:'.2f' }}</div>
+    </div>
+</div>
+
+<div class="panel table-wrap">
+    <table>
+        <thead>
+            <tr>
+                <th>Número</th>
+                <th>Fecha</th>
+                <th>Total</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for venta in ventas %}
+            <tr>
+                <td>{{ venta.numero_venta }}</td>
+                <td>{{ venta.fecha_venta|date:'d/m/Y H:i' }}</td>
+                <td>$ {{ venta.total|stringformat:'.2f' }}</td>
+                <td><a class="btn btn-secondary btn-inline" href="{% url 'inventario:venta_detalle' venta.pk %}">Detalle</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% elif request.GET %}
+<div class="panel empty-state">
+    <h2>No hay ventas en ese rango de fechas</h2>
+    <p>Prueba un período distinto o registra una nueva venta.</p>
+</div>
+{% endif %}
+{% endblock %}

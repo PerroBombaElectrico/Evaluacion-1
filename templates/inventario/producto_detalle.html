@@ -1,16 +1,47 @@
 {% extends 'inventario/base.html' %}
-{# Detalle: presenta todos los datos del producto seleccionado. #}
-{% block title %}{{ producto.nombre }}{% endblock %}
-{% block content %}
-<main class="container">
-    {# Navegación de regreso al listado. #}
-    <a class="back-link" href="{% url 'inventario:producto_lista' %}">&larr; Volver al inventario</a>
-    <section class="panel detail-panel" style="margin-top:22px;">
-        {# Encabezado y acciones del producto actual. #}
-        <div class="detail-header"><div><div class="eyebrow">Detalle de producto</div><h1>{{ producto.nombre }}</h1><p class="lede">{{ producto.descripcion|default:'Sin descripción registrada.' }}</p></div><div class="detail-actions"><a class="button" href="{% url 'inventario:producto_actualizar' producto.pk %}">Editar</a><a class="button button--quiet" href="{% url 'inventario:producto_eliminar' producto.pk %}">Eliminar</a></div></div>
-        {# Ficha de datos conectada al objeto producto. #}
-        <dl><div><dt>Código</dt><dd>{{ producto.codigo }}</dd></div><div><dt>Precio</dt><dd>${{ producto.precio }}</dd></div><div><dt>Stock disponible</dt><dd>{{ producto.stock }} unidades</dd></div><div><dt>Estado</dt><dd>{% if producto.stock %}Disponible{% else %}<span class="warning">Agotado</span>{% endif %}</dd></div><div><dt>Fecha de creación</dt><dd>{{ producto.fecha_creacion|date:'d/m/Y H:i' }}</dd></div><div><dt>Última actualización</dt><dd>{{ producto.fecha_actualizacion|date:'d/m/Y H:i' }}</dd></div></dl>
-    </section>
 
-</main>
+{% block title %}{{ producto.nombre }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <div class="eyebrow">Detalle</div>
+        <h1>{{ producto.nombre }}</h1>
+        <p class="lead">{{ producto.descripcion|default:'Sin descripción registrada.' }}</p>
+    </div>
+    <div class="actions">
+        <a class="btn btn-secondary" href="{% url 'inventario:producto_actualizar' producto.pk %}">Editar</a>
+        <a class="btn btn-danger" href="{% url 'inventario:producto_eliminar' producto.pk %}">Eliminar</a>
+    </div>
+</div>
+
+<div class="panel">
+    <div class="form-grid">
+        <div class="form-row">
+            <label>Nombre</label>
+            <div class="form-control" style="background: #f8fafc;">{{ producto.nombre }}</div>
+        </div>
+        <div class="form-row">
+            <label>Categoría</label>
+            <div class="form-control" style="background: #f8fafc;">{{ producto.categoria|default:'General' }}</div>
+        </div>
+        <div class="form-row">
+            <label>Precio</label>
+            <div class="form-control" style="background: #f8fafc;">$ {{ producto.precio }}</div>
+        </div>
+        <div class="form-row">
+            <label>Stock</label>
+            <div class="form-control" style="background: #f8fafc;">{{ producto.stock }} unidades</div>
+        </div>
+        <div class="form-row">
+            <label>Fecha de creación</label>
+            <div class="form-control" style="background: #f8fafc;">{{ producto.fecha_creacion|date:'d/m/Y H:i' }}</div>
+        </div>
+        <div class="form-row">
+            <label>Última actualización</label>
+            <div class="form-control" style="background: #f8fafc;">{{ producto.fecha_actualizacion|date:'d/m/Y H:i' }}</div>
+        </div>
+    </div>
+</div>
 {% endblock %}
+

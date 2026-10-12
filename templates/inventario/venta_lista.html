@@ -1,0 +1,72 @@
+{% extends 'inventario/base.html' %}
+
+{% block title %}Ventas{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <div class="eyebrow">Ventas</div>
+        <h1>Historial de ventas</h1>
+        <p class="lead">Consulta el historial, revisa totales y accede al detalle de cada operación.</p>
+    </div>
+    <a class="btn btn-primary" href="{% url 'inventario:venta_crear' %}">Registrar venta</a>
+</div>
+
+{% if ventas %}
+<div class="panel table-wrap">
+    <table>
+        <thead>
+            <tr>
+                <th>Número</th>
+                <th>Fecha</th>
+                <th>Total</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for venta in ventas %}
+            <tr>
+                <td>{{ venta.numero_venta }}</td>
+                <td>{{ venta.fecha_venta|date:'d/m/Y H:i' }}</td>
+                <td>$ {{ venta.total }}</td>
+                <td>
+                    {% if venta.estado == 'completada' %}
+                    <span class="badge badge-success">Completada</span>
+                    {% else %}
+                    <span class="badge badge-danger">Anulada</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <div class="actions">
+                        <a class="btn btn-secondary btn-inline" href="{% url 'inventario:venta_detalle' venta.pk %}">Detalle</a>
+                        <a class="btn btn-secondary btn-inline" href="{% url 'inventario:venta_actualizar' venta.pk %}">Editar</a>
+                        <a class="btn btn-danger btn-inline" href="{% url 'inventario:venta_eliminar' venta.pk %}">Eliminar</a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% if ventas.has_other_pages %}
+<div class="panel" style="margin-top:1rem; display:flex; justify-content:space-between; flex-wrap: wrap; gap: 0.5rem;">
+    {% if ventas.has_previous %}
+    <a class="btn btn-secondary" href="?page={{ ventas.previous_page_number }}">Anterior</a>
+    {% endif %}
+    <span class="muted">Página {{ ventas.number }} de {{ ventas.paginator.num_pages }}</span>
+    {% if ventas.has_next %}
+    <a class="btn btn-secondary" href="?page={{ ventas.next_page_number }}">Siguiente</a>
+    {% endif %}
+</div>
+{% endif %}
+
+{% else %}
+<div class="panel empty-state">
+    <h2>No hay ventas registradas</h2>
+    <p>Aún no se ha realizado ninguna operación.</p>
+    <a class="btn btn-primary" href="{% url 'inventario:venta_crear' %}">Registrar primera venta</a>
+</div>
+{% endif %}
+{% endblock %}
