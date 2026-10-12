@@ -125,7 +125,7 @@ class VentaLogicTests(TestCase):
         self.assertContains(response, "VT000001")
         self.assertContains(response, "VT000002")
         self.assertNotContains(response, "VT000003")
-        self.assertContains(response, "350.00")
+        self.assertContains(response, "$ 350")
         self.assertContains(response, "2")
 
 

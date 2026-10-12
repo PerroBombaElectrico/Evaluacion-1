@@ -1,4 +1,5 @@
 {% extends 'inventario/base.html' %}
+{% load formatos %}
 
 {% block title %}Eliminar venta{% endblock %}
 
@@ -8,7 +9,7 @@
     <p class="lead">¿Deseas eliminar la venta <strong>{{ venta.numero_venta }}</strong>? Se restaurará el stock asociado.</p>
     <div class="form-row">
         <label>Total</label>
-        <div class="form-control" style="background:#f8fafc;">$ {{ venta.total }}</div>
+        <div class="form-control" style="background:#f8fafc;">{{ venta.total|pesos_chilenos }}</div>
     </div>
     <form method="post">
         {% csrf_token %}

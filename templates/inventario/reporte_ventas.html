@@ -1,4 +1,5 @@
 {% extends 'inventario/base.html' %}
+{% load formatos %}
 
 {% block title %}Reporte de ventas{% endblock %}
 
@@ -41,7 +42,7 @@
     </div>
     <div class="metric card" style="grid-column: span 2;">
         <div class="metric-label">Total vendido</div>
-        <div class="metric-value">$ {{ total_vendido|stringformat:'.2f' }}</div>
+        <div class="metric-value">{{ total_vendido|pesos_chilenos }}</div>
     </div>
 </div>
 
@@ -60,7 +61,7 @@
             <tr>
                 <td>{{ venta.numero_venta }}</td>
                 <td>{{ venta.fecha_venta|date:'d/m/Y H:i' }}</td>
-                <td>$ {{ venta.total|stringformat:'.2f' }}</td>
+                <td>{{ venta.total|pesos_chilenos }}</td>
                 <td><a class="btn btn-secondary btn-inline" href="{% url 'inventario:venta_detalle' venta.pk %}">Detalle</a></td>
             </tr>
             {% endfor %}

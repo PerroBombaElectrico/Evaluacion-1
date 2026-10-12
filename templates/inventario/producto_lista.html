@@ -1,4 +1,5 @@
 {% extends 'inventario/base.html' %}
+{% load formatos %}
 
 {% block title %}Productos{% endblock %}
 
@@ -42,7 +43,7 @@
                     <span class="muted">{{ producto.descripcion|default:'Sin descripción'|truncatechars:70 }}</span>
                 </td>
                 <td>{{ producto.categoria|default:'General' }}</td>
-                <td>$ {{ producto.precio }}</td>
+                <td>{{ producto.precio|pesos_chilenos }}</td>
                 <td>
                     {% if producto.stock > 0 %}
                     <span class="badge badge-success">{{ producto.stock }} unidades</span>
@@ -83,4 +84,3 @@
 </div>
 {% endif %}
 {% endblock %}
-

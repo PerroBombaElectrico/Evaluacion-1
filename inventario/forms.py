@@ -12,14 +12,14 @@ class ProductoForm(forms.ModelForm):
             "nombre": forms.TextInput(attrs={"class": "form-control", "placeholder": "Nombre del producto"}),
             "descripcion": forms.Textarea(attrs={"class": "form-control", "rows": 4, "placeholder": "Descripción"}),
             "categoria": forms.TextInput(attrs={"class": "form-control", "placeholder": "Categoría"}),
-            "precio": forms.NumberInput(attrs={"class": "form-control", "step": "0.01", "min": "0.00", "placeholder": "0.00"}),
+            "precio": forms.NumberInput(attrs={"class": "form-control", "step": "1", "min": "0", "placeholder": "0"}),
             "stock": forms.NumberInput(attrs={"class": "form-control", "min": "0", "placeholder": "0"}),
         }
         labels = {
             "nombre": "Nombre",
             "descripcion": "Descripción",
             "categoria": "Categoría",
-            "precio": "Precio",
+            "precio": "Precio (CLP)",
             "stock": "Stock disponible",
         }
 

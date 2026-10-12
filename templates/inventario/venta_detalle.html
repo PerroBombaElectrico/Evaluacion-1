@@ -1,4 +1,5 @@
 {% extends 'inventario/base.html' %}
+{% load formatos %}
 
 {% block title %}Detalle de venta {{ venta.numero_venta }}{% endblock %}
 
@@ -23,7 +24,7 @@
         </div>
         <div class="form-row">
             <label>Total</label>
-            <div class="form-control" style="background: #f8fafc;">$ {{ venta.total }}</div>
+            <div class="form-control" style="background: #f8fafc;">{{ venta.total|pesos_chilenos }}</div>
         </div>
     </div>
 </div>
@@ -43,8 +44,8 @@
             <tr>
                 <td>{{ detalle.producto.nombre }}</td>
                 <td>{{ detalle.cantidad }}</td>
-                <td>$ {{ detalle.precio_unitario }}</td>
-                <td>$ {{ detalle.subtotal }}</td>
+                <td>{{ detalle.precio_unitario|pesos_chilenos }}</td>
+                <td>{{ detalle.subtotal|pesos_chilenos }}</td>
             </tr>
             {% empty %}
             <tr><td colspan="4">La venta aún no tiene detalles.</td></tr>

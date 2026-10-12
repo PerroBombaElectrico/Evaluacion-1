@@ -22,6 +22,7 @@ Aplicación web desarrollada con Django para gestionar productos y ventas de una
 - WhiteNoise para archivos estáticos
 - PostgreSQL driver: `psycopg`
 - Variables de entorno con `python-dotenv`
+- Configuración regional de Chile: español de Chile, zona horaria de Santiago y pesos chilenos (CLP)
 
 ## Instalación local
 
