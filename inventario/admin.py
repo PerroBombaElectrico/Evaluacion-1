@@ -7,14 +7,14 @@ admin.site.site_title = "Tienda Admin"
 admin.site.site_header = "Tienda | Panel administrativo"
 admin.site.index_title = "Gestión de la tienda"
 
-
-@admin.register(Producto)
 class ProductoAdmin(admin.ModelAdmin):
     list_display = ("nombre", "categoria", "precio", "stock", "fecha_creacion")
     search_fields = ("nombre", "categoria")
     list_filter = ("categoria", "fecha_creacion")
     ordering = ("nombre",)
     list_per_page = 15
+
+admin.site.register(model_or_iterable=Producto, admin_class=ProductoAdmin)
 
 
 class DetalleVentaInline(admin.TabularInline):
