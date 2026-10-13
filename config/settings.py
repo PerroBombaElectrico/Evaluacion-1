@@ -9,14 +9,20 @@ load_dotenv(BASE_DIR / ".env")
 
 SECRET_KEY = os.getenv("SECRET_KEY", "django-inventory-development-key")
 DEBUG = os.getenv("DEBUG", "True").lower() == "true"
-ALLOWED_HOSTS = [
+configured_hosts = [
     host.strip()
-    for host in os.getenv(
-        "ALLOWED_HOSTS",
-        "localhost,127.0.0.1,evaluacion-1-ashy.vercel.app",
-    ).split(",")
+    for host in os.getenv("ALLOWED_HOSTS", "").split(",")
     if host.strip()
 ]
+ALLOWED_HOSTS = list(
+    dict.fromkeys(
+        configured_hosts + [
+            "localhost",
+            "127.0.0.1",
+            ".vercel.app",
+        ]
+    )
+)
 CSRF_TRUSTED_ORIGINS = [
     origin.strip()
     for origin in os.getenv(
@@ -66,14 +72,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "config.wsgi.application"
-
-# Configuración anterior de desarrollo local:
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": BASE_DIR / "db.sqlite3",
-#     }
-# }
 
 # Producción: PostgreSQL desde DATABASE_URL.
 # Desarrollo local: SQLite si DATABASE_URL no existe o está vacía.
