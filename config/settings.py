@@ -75,21 +75,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
-# ==========================================
-# CONFIGURACIÓN DE BASE DE DATOS (FLEXIBLE)
-# ==========================================
 DATABASE_URL = os.getenv("DATABASE_URL", "").strip()
-
-# Si no hay DATABASE_URL completa, intentamos armarla con las variables separadas de Vercel
-if not DATABASE_URL:
-    db_user = os.getenv("user", "")
-    db_password = os.getenv("password", "")
-    db_host = os.getenv("host", "")
-    db_port = os.getenv("port", "")
-    db_name = os.getenv("database", "")
-    
-    if db_host and db_name:
-        DATABASE_URL = f"postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
 
 if DATABASE_URL:
     DATABASES = {
