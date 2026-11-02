@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cliente API de inventario</title>
+    <style>
+        :root { color-scheme: light; font-family: system-ui, sans-serif; }
+        body { background: #f8fafc; color: #172033; margin: 0; padding: 2rem 1rem; }
+        main { margin: auto; max-width: 900px; }
+        .card { background: white; border: 1px solid #dbe3ee; border-radius: .75rem; margin-bottom: 1rem; padding: 1.25rem; }
+        form { display: grid; gap: .75rem; max-width: 420px; }
+        label { display: grid; gap: .3rem; font-weight: 600; }
+        input, button { border: 1px solid #b8c5d6; border-radius: .4rem; font: inherit; padding: .6rem; }
+        button { background: #2563eb; border-color: #2563eb; color: white; cursor: pointer; font-weight: 600; }
+        button:disabled { cursor: not-allowed; opacity: .55; }
+        .actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1rem; }
+        .secondary { background: white; color: #1d4ed8; }
+        .status { min-height: 1.5rem; }
+        .error { color: #b91c1c; }
+        .success { color: #15803d; }
+        .products { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); margin-top: 1rem; }
+        .product { border: 1px solid #dbe3ee; border-radius: .5rem; padding: 1rem; }
+        .product h3 { margin-top: 0; }
+        .price { color: #047857; font-weight: 700; }
+        .skeleton { animation: pulse 1.2s ease-in-out infinite; background: #e2e8f0; border-radius: .3rem; height: 1rem; margin: .6rem 0; }
+        @keyframes pulse { 50% { opacity: .45; } }
+    </style>
+</head>
+<body>
+    <main>
+        <h1>Cliente JavaScript para la API</h1>
+        <p>Inicia sesión con un usuario de Django para consultar los productos protegidos.</p>
+
+        <section class="card" aria-labelledby="login-title">
+            <h2 id="login-title">Autenticación JWT</h2>
+            <form id="login-form">
+                <label for="username">Usuario</label>
+                <input id="username" name="username" autocomplete="username" required>
+                <label for="password">Contraseña</label>
+                <input id="password" name="password" type="password" autocomplete="current-password" required>
+                <button id="login-button" type="submit">Obtener token</button>
+            </form>
+            <p id="status" class="status" role="status" aria-live="polite"></p>
+        </section>
+
+        <section class="card" aria-labelledby="products-title">
+            <h2 id="products-title">Productos protegidos</h2>
+            <div class="actions">
+                <button id="load-products" type="button" disabled>Cargar productos</button>
+                <button id="logout" class="secondary" type="button">Cerrar sesión</button>
+            </div>
+            <div id="loader" hidden aria-label="Cargando productos" aria-live="polite">
+                <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+            </div>
+            <div id="products" class="products"></div>
+        </section>
+    </main>
+
+    <script>
+        const ACCESS_TOKEN_KEY = "inventario_access_token";
+        const REFRESH_TOKEN_KEY = "inventario_refresh_token";
+        const loginForm = document.querySelector("#login-form");
+        const loginButton = document.querySelector("#login-button");
+        const loadButton = document.querySelector("#load-products");
+        const logoutButton = document.querySelector("#logout");
+        const statusElement = document.querySelector("#status");
+        const loaderElement = document.querySelector("#loader");
+        const productsElement = document.querySelector("#products");
+
+        function setStatus(message, isError = false) {
+            statusElement.textContent = message;
+            statusElement.className = `status ${isError ? "error" : "success"}`;
+        }
+
+        function setAuthenticated(authenticated) {
+            loadButton.disabled = !authenticated;
+        }
+
+        async function readResponse(response) {
+            const data = await response.json().catch(() => ({}));
+            return { response, data };
+        }
+
+        async function refreshAccessToken() {
+            const refresh = localStorage.getItem(REFRESH_TOKEN_KEY);
+            if (!refresh) return false;
+
+            const response = await fetch("/api/token/refresh/", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ refresh })
+            });
+            const { data } = await readResponse(response);
+            if (!response.ok || !data.access) return false;
+
+            localStorage.setItem(ACCESS_TOKEN_KEY, data.access);
+            return true;
+        }
+
+        async function fetchProducts(retry = true) {
+            const access = localStorage.getItem(ACCESS_TOKEN_KEY);
+            if (!access) return null;
+
+            const result = await readResponse(await fetch("/api/productos/", {
+                headers: { "Authorization": `Bearer ${access}` }
+            }));
+            if (result.response.status === 401 && retry && await refreshAccessToken()) {
+                return fetchProducts(false);
+            }
+            return result;
+        }
+
+        function renderProducts(products) {
+            productsElement.replaceChildren();
+            if (!Array.isArray(products) || products.length === 0) {
+                productsElement.textContent = "No hay productos registrados.";
+                return;
+            }
+
+            products.forEach((product) => {
+                const card = document.createElement("article");
+                card.className = "product";
+                const name = document.createElement("h3");
+                name.textContent = product.nombre || "Producto sin nombre";
+                const price = document.createElement("p");
+                price.className = "price";
+                price.textContent = `$${product.precio ?? 0} CLP`;
+                const stock = document.createElement("p");
+                stock.textContent = `Stock disponible: ${product.stock ?? "N/A"}`;
+                card.append(name, price, stock);
+                productsElement.append(card);
+            });
+        }
+
+        loginForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            loginButton.disabled = true;
+            setStatus("Autenticando...");
+            try {
+                const response = await fetch("/api/token/", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        username: loginForm.username.value.trim(),
+                        password: loginForm.password.value
+                    })
+                });
+                const { data } = await readResponse(response);
+                if (!response.ok || !data.access || !data.refresh) {
+                    setStatus(data.detail || "No fue posible iniciar sesión.", true);
+                    return;
+                }
+                localStorage.setItem(ACCESS_TOKEN_KEY, data.access);
+                localStorage.setItem(REFRESH_TOKEN_KEY, data.refresh);
+                setAuthenticated(true);
+                setStatus("Autenticación correcta.");
+            } catch {
+                setStatus("No se pudo conectar con la API.", true);
+            } finally {
+                loginButton.disabled = false;
+            }
+        });
+
+        loadButton.addEventListener("click", async () => {
+            loadButton.disabled = true;
+            loaderElement.hidden = false;
+            productsElement.replaceChildren();
+            try {
+                const result = await fetchProducts();
+                if (!result || !result.response.ok) {
+                    localStorage.removeItem(ACCESS_TOKEN_KEY);
+                    localStorage.removeItem(REFRESH_TOKEN_KEY);
+                    setStatus("La sesión expiró. Inicia sesión nuevamente.", true);
+                    setAuthenticated(false);
+                    return;
+                }
+                renderProducts(result.data);
+                setStatus("Productos cargados correctamente.");
+            } catch {
+                setStatus("No se pudo conectar con la API.", true);
+            } finally {
+                loaderElement.hidden = true;
+                loadButton.disabled = !localStorage.getItem(ACCESS_TOKEN_KEY);
+            }
+        });
+
+        logoutButton.addEventListener("click", () => {
+            localStorage.removeItem(ACCESS_TOKEN_KEY);
+            localStorage.removeItem(REFRESH_TOKEN_KEY);
+            productsElement.replaceChildren();
+            setAuthenticated(false);
+            setStatus("Sesión cerrada.");
+        });
+
+        setAuthenticated(Boolean(localStorage.getItem(ACCESS_TOKEN_KEY)));
+    </script>
+</body>
+</html>

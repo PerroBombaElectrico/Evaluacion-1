@@ -6,6 +6,7 @@ app_name = "inventario"
 
 urlpatterns = [
     path("", views.inicio, name="inicio"),
+    path("cliente/", views.cliente_api, name="cliente_api"),
     path("productos/", views.producto_lista, name="producto_lista"),
     path("productos/nuevo/", views.producto_crear, name="producto_crear"),
     path("productos/<int:pk>/", views.producto_detalle, name="producto_detalle"),

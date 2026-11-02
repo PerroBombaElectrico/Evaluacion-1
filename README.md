@@ -112,6 +112,14 @@ La aplicación estará disponible en:
 http://127.0.0.1:8000/
 ```
 
+El cliente web de la API está disponible en:
+
+```text
+http://127.0.0.1:8000/cliente/
+```
+
+Permite autenticarse con JWT y consultar los productos protegidos.
+
 ## Pruebas
 
 ```bash

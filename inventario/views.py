@@ -286,3 +286,7 @@ def inicio(request):
         "total_vendido": total_ventas["total"] or Decimal("0.00"),
     }
     return render(request, "inventario/index.html", context)
+
+
+def cliente_api(request):
+    return render(request, "inventario/cliente.html")
