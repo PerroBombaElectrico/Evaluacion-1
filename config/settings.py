@@ -5,13 +5,6 @@ from pathlib import Path
 import dj_database_url
 from dotenv import load_dotenv
 
-load_dotenv()
-db_host = os.getenv("host")
-db_port  = os.getenv("port")
-db_database = os.getenv("database")
-db_user = os.getenv("user")
-db_password = os.getenv("password")
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
 
@@ -68,8 +61,6 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-CORS_ALLOWED_ALL_ORIGINS = True
-
 ROOT_URLCONF = "config.urls"
 
 TEMPLATES = [
@@ -91,7 +82,7 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 DATABASE_URL = os.getenv("DATABASE_URL", "").strip()
 
-if DATABASE_URL:
+if not DEBUG and DATABASE_URL:
     DATABASES = {
         "default": dj_database_url.parse(
             DATABASE_URL,
@@ -101,12 +92,8 @@ if DATABASE_URL:
 else:
     DATABASES = {
         "default": {
-            "ENGINE": "django.db.backends.postgresql",
-            "NAME": db_database,
-            "USER": db_user,
-            "PASSWORD": db_password,
-            "HOST": db_host,
-            "PORT": db_port
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
         }
     }
 
@@ -168,7 +155,8 @@ REST_FRAMEWORK = {
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": (
-        "rest_framework.permissions.IsAuthenticated",),
+        "rest_framework.permissions.IsAuthenticated",
+    ),
 }
 
 SIMPLE_JWT = {
