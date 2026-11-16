@@ -1,4 +1,4 @@
-# Evaluación Sumativa 2 - Caso 2: Control de ventas
+# Evaluación 3 - API REST de inventario y control de ventas
 
 ## Descripción del sistema
 
@@ -11,6 +11,8 @@ Aplicación web desarrollada con Django para gestionar productos y ventas de una
 - Reporte de ventas por rango de fechas.
 - Administración con Django Admin.
 - Configuración para entornos de desarrollo y producción.
+- API REST con Django REST Framework, ViewSets y Routers.
+- Autenticación JWT y cliente web consumidor.
 
 ## Tecnologías utilizadas
 
@@ -23,6 +25,8 @@ Aplicación web desarrollada con Django para gestionar productos y ventas de una
 - PostgreSQL driver: `psycopg`
 - Variables de entorno con `python-dotenv`
 - Configuración regional de Chile: español de Chile, zona horaria de Santiago y pesos chilenos (CLP)
+- Django REST Framework y Simple JWT.
+- django-cors-headers.
 
 ## Instalación local
 
@@ -77,6 +81,7 @@ DEBUG=True
 ALLOWED_HOSTS=localhost,127.0.0.1
 DATABASE_URL=sqlite:///db.sqlite3
 CSRF_TRUSTED_ORIGINS=http://localhost:8000,http://127.0.0.1:8000
+CORS_ALLOWED_ORIGINS=http://localhost:8000,http://127.0.0.1:8000
 ```
 
 Para producción con PostgreSQL, usa una línea como esta:
@@ -86,6 +91,7 @@ DATABASE_URL=postgresql://usuario:password@host:5432/nombre_bd
 DEBUG=False
 ALLOWED_HOSTS=miapp.onrender.com
 CSRF_TRUSTED_ORIGINS=https://miapp.onrender.com
+CORS_ALLOWED_ORIGINS=https://mi-cliente.com,https://miapp.onrender.com
 ```
 
 ## Migraciones
@@ -119,6 +125,81 @@ http://127.0.0.1:8000/cliente/
 ```
 
 Permite autenticarse con JWT y consultar los productos protegidos.
+
+## API REST y autenticación JWT
+
+La API expone los modelos de inventario mediante rutas RESTful protegidas:
+
+| Recurso | Endpoint |
+|---|---|
+| Productos | `/api/productos/` |
+| Ventas | `/api/ventas/` |
+| Detalles de venta | `/api/detalles-venta/` |
+
+Los tokens se obtienen y renuevan mediante:
+
+- `POST /api/token/`
+- `POST /api/token/refresh/`
+
+Los endpoints de datos requieren el encabezado:
+
+```http
+Authorization: Bearer <access_token>
+```
+
+La variable `CORS_ALLOWED_ORIGINS` debe incluir los orígenes exactos desde los que se servirá el cliente web, tanto en desarrollo como en producción. No se habilitan orígenes arbitrarios con `*`.
+
+## Pruebas de la API con cURL
+
+### Consultar sin token
+
+Esta solicitud debe responder con `401 Unauthorized`:
+
+```bash
+curl -i http://127.0.0.1:8000/api/productos/
+```
+
+### Obtener un token JWT
+
+Reemplaza `admin` y `tu-contraseña` por las credenciales de un usuario de Django:
+
+```bash
+curl -X POST http://127.0.0.1:8000/api/token/ ^
+  -H "Content-Type: application/json" ^
+  -d "{\"username\":\"admin\",\"password\":\"tu-contraseña\"}"
+```
+
+En Linux/macOS, usa `\` al final de cada línea:
+
+```bash
+curl -X POST http://127.0.0.1:8000/api/token/ \
+  -H "Content-Type: application/json" \
+  -d '{"username":"admin","password":"tu-contraseña"}'
+```
+
+La respuesta contiene `access` y `refresh`. Usa el valor de `access` para consultar los datos:
+
+```bash
+curl -i http://127.0.0.1:8000/api/productos/ ^
+  -H "Authorization: Bearer <access_token>"
+```
+
+En Linux/macOS:
+
+```bash
+curl -i http://127.0.0.1:8000/api/productos/ \
+  -H "Authorization: Bearer <access_token>"
+```
+
+### Renovar el token
+
+```bash
+curl -X POST http://127.0.0.1:8000/api/token/refresh/ ^
+  -H "Content-Type: application/json" ^
+  -d "{\"refresh\":\"<refresh_token>\"}"
+```
+
+El cliente web de `/cliente/` realiza este flujo automáticamente y muestra los productos en tarjetas con un Skeleton Loader mientras espera la respuesta.
 
 ## Pruebas
 
@@ -172,7 +253,7 @@ La configuración recomendada es:
 5. Ejecutar migraciones y `collectstatic`.
 6. Habilitar HTTPS.
 
-## Lista de comprobación ES02
+## Lista de comprobación Evaluación 3
 
 - [x] Proyecto reutilizado y estructura organizada.
 - [x] Modelo `Producto` con validaciones.
@@ -189,6 +270,11 @@ La configuración recomendada es:
 - [x] Configuración de despliegue y WhiteNoise.
 - [x] Pruebas automatizadas.
 - [x] README en español.
+- [x] API REST con serializers, ViewSets y Router.
+- [x] Autenticación JWT con permisos `IsAuthenticated`.
+- [x] CORS configurado para desarrollo y producción.
+- [x] Cliente web con `fetch`, Bearer token, tarjetas y Skeleton Loader.
+- [x] Ejemplos cURL con y sin token.
 
 ## Guion breve de presentación
 
